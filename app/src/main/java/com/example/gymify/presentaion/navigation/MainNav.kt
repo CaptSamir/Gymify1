@@ -36,8 +36,8 @@ fun MainNav() {
     Scaffold(
         bottomBar = {
             NavigationBar(
-                containerColor = Color.White,
-                contentColor = Color.Black,
+                containerColor = Color.Black,
+                contentColor = Color.White,
                 tonalElevation = 4.dp
             ) {
                 items.forEach { item ->
@@ -64,7 +64,11 @@ fun MainNav() {
             startDestination = BottomNavItem.Home.route,
             Modifier.padding(innerPadding)
         ) {
-            composable(BottomNavItem.Home.route) { HomeScreen() }
+            composable(BottomNavItem.Home.route) { HomeScreen(
+                onViewPlanClick = {
+                    navController.navigate(Screen.Plan.route)
+                }
+            ) }
             composable(BottomNavItem.Exercises.route) { ExercisesScreen(
                 navController = navController,
                 onExerciseClick = { exercise ->
@@ -79,12 +83,16 @@ fun MainNav() {
                 arguments = listOf(navArgument("exerciseId") { type = NavType.StringType })
             ) { backStackEntry ->
                 val exerciseId = backStackEntry.arguments?.getString("exerciseId") ?: ""
-                ExerciseDetailsScreen(exerciseID = exerciseId, onAddToPlanClick = ({}))
+                ExerciseDetailsScreen(exerciseID = exerciseId)
             }
 
 
 
-            composable(Screen.Plan.route) { PlanScreen() } // Add PlanScreen here
+            composable(Screen.Plan.route) { PlanScreen(
+                onBack = ({
+                    navController.popBackStack()
+                })
+            ) } // Add PlanScreen here
 
         }
     }

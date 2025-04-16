@@ -36,13 +36,13 @@ fun ExercisesScreen(
     val error by viewModel.errorMessage.observeAsState()
 
 
-
     var selectedFilter by remember { mutableStateOf("All") }
     var searchQuery by remember { mutableStateOf("") }
 
-    val filteredExercises = exercisesItems?.filter {
-        (selectedFilter == "All" || it.equipment ==  "With Equipment") &&
-                it.name.contains(searchQuery, ignoreCase = true)
+    val filteredExercises = exercisesItems.filter { exercise ->
+        val matchesFilter = selectedFilter == "All" || exercise.target.equals(selectedFilter, ignoreCase = true)
+        val matchesSearch = exercise.name.contains(searchQuery, ignoreCase = true)
+        matchesFilter && matchesSearch
     }
 
     Column(modifier.fillMaxSize().padding(16.dp)) {
@@ -60,12 +60,20 @@ fun ExercisesScreen(
 
         Spacer(Modifier.height(12.dp))
 
+
+        val muscleGroups = listOf(
+            "All", "abductors", "abs", "adductors", "biceps", "calves",
+            "cardiovascular system", "delts", "forearms", "glutes", "hamstrings",
+            "lats", "levator scapulae", "pectorals", "quads", "serratus anterior",
+            "spine", "traps", "triceps", "upper back"
+        )
+
         // Filter Row
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.horizontalScroll(rememberScrollState())
         ) {
-            listOf("All", "With Equipment", "Without Equipment").forEach { label ->
+            muscleGroups.forEach { label ->
                 FilterChip(
                     selected = selectedFilter == label,
                     onClick = { selectedFilter = label },
@@ -86,7 +94,7 @@ fun ExercisesScreen(
             if (error != null) {
                 Log.d("Error", error.toString())
             }else{
-                items(exercisesItems) { exercise ->
+                items(filteredExercises) { exercise ->
                     ExerciseCard(exercise = exercise , onExerciseClick = onExerciseClick)
 
                 }

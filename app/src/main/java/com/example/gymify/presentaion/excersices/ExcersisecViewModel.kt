@@ -1,23 +1,28 @@
 package com.example.gymify.presentaion.excersices
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.gymify.data.local.appDataBase.ExerciseDao
+import com.example.gymify.data.local.appDataBase.ExerciseEntity
 import com.example.gymify.data.online.API
 import com.example.gymify.domain.models.ExcersiceItem
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
-import retrofit2.Response
 import javax.inject.Inject
 
-//import dagger.hilt.android.lifecycle.HiltViewModel
-//import kotlinx.coroutines.launch
-//import javax.inject.Inject
+
 
 @HiltViewModel
 class ExcersisecViewModel @Inject constructor(
-    private val apiService: API
+    private val apiService: API,
+    private val exerciseDao: ExerciseDao,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _exerciseList = MutableLiveData<List<ExcersiceItem>>()
@@ -32,43 +37,101 @@ class ExcersisecViewModel @Inject constructor(
 
 
     init {
-        fetchExercises(limit = 10, offset = 0)
+        fetchExercises(limit = 300, offset = 0)
 
     }
+
 
     fun fetchExercises(limit: Int, offset: Int) {
         viewModelScope.launch {
-            try {
-                val response = apiService.getExercises(limit, offset)
-                if (response.isSuccessful) {
-                    _exerciseList.postValue(response.body()) // Update LiveData with the result
-                } else {
-                    _errorMessage.postValue("Error: ${response.code()}") // Handle error
+            if (context.isConnected()) {
+                try {
+                    val response = apiService.getExercises(limit, offset)
+                    if (response.isSuccessful) {
+                        val exercises = response.body() ?: emptyList()
+                        _exerciseList.postValue(exercises)
+
+                        // Save to Room
+                        val entityList = exercises.map { it.toEntity() }
+                        exerciseDao.insertExercises(entityList)
+
+                    } else {
+                        _errorMessage.postValue("Error: ${response.code()}")
+                    }
+                } catch (e: Exception) {
+                    _errorMessage.postValue("Failure: ${e.message}")
                 }
-            } catch (e: Exception) {
-                _errorMessage.postValue("Failure: ${e.message}") // Handle failure
+            } else {
+                val cached = exerciseDao.getAllExercises()
+                cached.collect { list ->
+                    _exerciseList.postValue(list.map { it.toModel() })
+                }
             }
         }
     }
+
+
 
     fun getExerciseById(id: String) {
         viewModelScope.launch {
-            try {
-                val response = apiService.getExerciseById(id)
-                if (response.isSuccessful) {
-                    response.body()?.let {
-                        _exerciseById.postValue(it) // post the actual item
-                    } ?: run {
-                        _errorMessage.postValue("Empty response")
+            if (context.isConnected()) {
+                try {
+                    val response = apiService.getExerciseById(id)
+                    if (response.isSuccessful) {
+                        response.body()?.let {
+                            _exerciseById.postValue(it)
+                        } ?: run {
+                            _errorMessage.postValue("Empty response")
+                        }
+                    } else {
+                        _errorMessage.postValue("Error: ${response.code()}")
                     }
-                } else {
-                    _errorMessage.postValue("Error: ${response.code()}")
+                } catch (e: Exception) {
+                    _errorMessage.postValue("Failure: ${e.message}")
                 }
-            } catch (e: Exception) {
-                _errorMessage.postValue("Failure: ${e.message}")
+            } else {
+                val localExercise = exerciseDao.getExerciseById(id)
+                if (localExercise != null) {
+                    _exerciseById.postValue(localExercise.toModel())
+                } else {
+                    _errorMessage.postValue("No internet and no local data found.")
+                }
             }
         }
     }
 
+
+
+
+
+
+    fun ExcersiceItem.toEntity(): ExerciseEntity = ExerciseEntity(
+        id = id,
+        name = name,
+        gifUrl = gifUrl,
+        target = target,
+        secondaryMuscles = secondaryMuscles,
+        instructions = instructions,
+        bodyPart = bodyPart,
+        equipment = equipment
+    )
+    
+    fun ExerciseEntity.toModel(): ExcersiceItem = ExcersiceItem(
+        id = id,
+        name = name,
+        gifUrl = gifUrl,
+        target = target,
+        secondaryMuscles = secondaryMuscles,
+        instructions = instructions,
+        bodyPart = bodyPart,
+        equipment = equipment
+    )
+
+    fun Context.isConnected(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork
+        val capabilities = connectivityManager.getNetworkCapabilities(network)
+        return capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+    }
 
 }

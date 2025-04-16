@@ -7,7 +7,6 @@ import dagger.hilt.android.HiltAndroidApp
 class Gymify : Application() {
     override fun onCreate() {
         super.onCreate()
-        // Initialize Hilt
         HiltAndroidApp()
     }
 }
