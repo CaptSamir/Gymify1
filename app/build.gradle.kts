@@ -90,6 +90,15 @@ dependencies {
 
 
 
+    implementation("androidx.work:work-runtime-ktx:2.7.1")
+
+
+    implementation("com.google.accompanist:accompanist-flowlayout:0.32.0")
+
+
+
+
+
 
 
 

@@ -3,7 +3,9 @@ package com.example.gymify.presentaion.profile
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -12,9 +14,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.gymify.presentaion.navigation.Screen
+import com.example.gymify.presentaion.profile.components.NotificationSettings
 import com.example.gymify.presentaion.profile.components.ProfileItem
 import com.example.gymify.presentaion.profile.components.ProfileToggleItem
 
@@ -27,15 +31,17 @@ fun ProfileScreen(
     onLogOutClick: () -> Unit = {}
 ) {
 
-
-    var notificationsEnabled by remember { mutableStateOf(true) }
+    val viewModel : ProfileViewModel =  hiltViewModel()
+    var notificationsEnabled by remember { mutableStateOf(false) }
     var darkModeEnabled by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    var showNotificationSettings by remember { mutableStateOf(false) }
 
     Column(
         modifier
             .fillMaxSize()
             .padding(16.dp)
+            .verticalScroll(rememberScrollState())
     ) {
         // Header
         Text("Profile", fontSize = 24.sp, fontWeight = FontWeight.Bold)
@@ -73,8 +79,28 @@ fun ProfileScreen(
         ProfileToggleItem(
             label = "Notifications",
             checked = notificationsEnabled,
-            onCheckedChange = { notificationsEnabled = it }
+            onCheckedChange = { notificationsEnabled = it
+                if (it) {
+                    Toast.makeText(context, "Notifications Enabled", Toast.LENGTH_SHORT).show()
+                    showNotificationSettings = true
+                } else {
+                    showNotificationSettings = false
+                    viewModel.disableNotifications(context)
+                    Toast.makeText(context, "Notifications Disabled", Toast.LENGTH_SHORT).show()
+                }
+            }
         )
+
+        if (showNotificationSettings) {
+            NotificationSettings(
+                viewModel = viewModel,
+                onSaveNotificationTime = { selectedDay, selectedTime ->
+                    viewModel.scheduleNotification(context, selectedDay, selectedTime)
+                    showNotificationSettings = false
+                },
+                context = context
+            )
+        }
 
         ProfileToggleItem(
             label = "Dark Mode",

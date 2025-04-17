@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun ProfileToggleItem(label: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+fun ProfileToggleItem(label: String, checked: Boolean, onCheckedChange:(Boolean) -> Unit) {
     Row(
         Modifier
             .fillMaxWidth()
