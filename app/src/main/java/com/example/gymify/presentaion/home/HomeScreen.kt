@@ -43,8 +43,8 @@ fun HomeScreen(
         planViewModel.loadPlan()
     }
 
-    val dummyHeight = 180 // cm
-    val dummyWeight = 94 // kg
+    val dummyHeight = 180
+    val dummyWeight = 94
     val bmi = dummyWeight / ((dummyHeight / 100f) * (dummyHeight / 100f))
 
     val planExercises = planViewModel.planExercises.observeAsState(emptyList())
@@ -117,11 +117,9 @@ fun HomeScreen(
                     }
                 }
 
-                // Add a space between days
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-            // Button to edit the plan
             Button(
                 onClick = onViewPlanClick,
                 modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
