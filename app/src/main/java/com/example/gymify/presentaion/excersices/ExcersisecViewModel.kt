@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.gymify.data.local.appDataBase.ExerciseDao
 import com.example.gymify.data.local.appDataBase.ExerciseEntity
 import com.example.gymify.data.online.API
+import com.example.gymify.di.ExerciseRetrofit
 import com.example.gymify.domain.models.ExcersiceItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -20,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ExcersisecViewModel @Inject constructor(
-    private val apiService: API,
+    @ExerciseRetrofit private val apiService: API,
     private val exerciseDao: ExerciseDao,
     @ApplicationContext private val context: Context
 ) : ViewModel() {

@@ -1,16 +1,5 @@
 package com.example.gymify.presentaion.navigation
 
-import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.*
-import com.example.gymify.presentaion.excersices.ExercisesScreen
-import com.example.gymify.presentaion.home.HomeScreen
-import com.example.gymify.presentaion.meals.MealsScreen
-import com.example.gymify.presentaion.plan.PlanScreen
-import com.example.gymify.presentaion.profile.ProfileScreen
-
 //@Composable
 //fun NavigationSetup(navController: NavHostController) {
 //    val navBackStackEntry = navController.currentBackStackEntryAsState()

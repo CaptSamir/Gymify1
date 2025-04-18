@@ -6,20 +6,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import androidx.navigation.navArgument
-import com.example.gymify.domain.models.ExcersiceItem
-import com.example.gymify.presentaion.excersices.ExcersisecViewModel
 import com.example.gymify.presentaion.excersices.ExerciseDetailsScreen
 import com.example.gymify.presentaion.excersices.ExercisesScreen
 import com.example.gymify.presentaion.home.HomeScreen
-import com.example.gymify.presentaion.meals.MealsScreen
+import com.example.gymify.presentaion.meals.ChatBot
 import com.example.gymify.presentaion.plan.PlanScreen
 import com.example.gymify.presentaion.profile.ProfileScreen
-import com.google.gson.Gson
 
 
 @Composable
@@ -75,7 +70,7 @@ fun MainNav() {
                     navController.navigate("exercise_detail/${exercise.id}")
                 }
             )}
-            composable(BottomNavItem.Meals.route) { MealsScreen() }
+            composable(BottomNavItem.Meals.route) { ChatBot() }
             composable(BottomNavItem.Profile.route) { ProfileScreen(navController = navController) }
 
             composable(
