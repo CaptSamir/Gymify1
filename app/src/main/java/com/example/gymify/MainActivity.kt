@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.work.WorkManager
 import com.example.gymify.presentaion.navigation.MainNav
 import com.example.gymify.presentaion.plan.PlanScreen
 import com.example.gymify.presentaion.profile.ProfileScreen
@@ -23,6 +25,8 @@ class MainActivity : ComponentActivity() {
             GymifyTheme {
                     enableEdgeToEdge()
                     MainNav()
+
+
 
             }
         }

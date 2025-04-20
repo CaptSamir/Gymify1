@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.example.gymify.data.local.DataStoreManager
 import com.example.gymify.presentaion.navigation.Screen
 import com.example.gymify.presentaion.profile.components.NotificationSettings
 import com.example.gymify.presentaion.profile.components.ProfileItem
@@ -27,14 +28,16 @@ fun ProfileScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
     onEditInfoClick: () -> Unit = {},
-    onManagePlansClick: () -> Unit = {},
     onLogOutClick: () -> Unit = {}
 ) {
 
     val viewModel : ProfileViewModel =  hiltViewModel()
-    var notificationsEnabled by remember { mutableStateOf(false) }
-    var darkModeEnabled by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    val notificationsEnabled by viewModel.notificationsEnabledFlow.collectAsState(initial = false)
+    val darkModeEnabled by viewModel.darkModeFlow.collectAsState(initial = false)
+
+
     var showNotificationSettings by remember { mutableStateOf(false) }
 
     Column(
@@ -79,7 +82,8 @@ fun ProfileScreen(
         ProfileToggleItem(
             label = "Notifications",
             checked = notificationsEnabled,
-            onCheckedChange = { notificationsEnabled = it
+            onCheckedChange = {
+                viewModel.setNotificationsEnabled(it)
                 if (it) {
                     Toast.makeText(context, "Notifications Enabled", Toast.LENGTH_SHORT).show()
                     showNotificationSettings = true
@@ -105,13 +109,11 @@ fun ProfileScreen(
         ProfileToggleItem(
             label = "Dark Mode",
             checked = darkModeEnabled,
-            onCheckedChange = { darkModeEnabled = it }
+            onCheckedChange = {
+                viewModel.setDarkMode(it)
+            }
         )
 
-        ProfileItem("Manage Plans") {
-            navController.navigate(Screen.Plan.route)
-            Toast.makeText(context, "Coming Soon!", Toast.LENGTH_SHORT).show()
-        }
 
         ProfileItem("Log Out") {
             Toast.makeText(context, "Logged out", Toast.LENGTH_SHORT).show()
