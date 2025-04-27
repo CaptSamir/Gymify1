@@ -14,11 +14,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.gymify.domain.models.ChatMessage
 import com.example.gymify.domain.models.Sender
+import com.example.gymify.ui.theme.PrimaryText
 
 @Composable
-fun ChatBubble(message: ChatMessage) {
+fun ChatBubble(message: ChatMessage,   bubbleColor: Color,
+               textColor: Color = PrimaryText) {
     val isUser = message.sender == Sender.USER
-    val bubbleColor = if (isUser) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary
     val alignment = if (isUser) Alignment.CenterEnd else Alignment.CenterStart
 
     Box(
@@ -29,7 +30,7 @@ fun ChatBubble(message: ChatMessage) {
     ) {
         Text(
             text = message.content,
-            color = Color.White,
+            color = textColor,
             modifier = Modifier
                 .background(color = bubbleColor, shape = RoundedCornerShape(12.dp))
                 .padding(12.dp)
