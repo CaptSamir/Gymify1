@@ -3,6 +3,7 @@ package com.example.gymify.presentaion.profile.components
 import android.app.TimePickerDialog
 import android.content.Context
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,11 +11,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import com.google.accompanist.flowlayout.FlowRow
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -30,6 +33,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.gymify.presentaion.profile.ProfileViewModel
+import com.example.gymify.ui.theme.BackgroundDark
+import com.example.gymify.ui.theme.PrimaryRed
+import com.example.gymify.ui.theme.PrimaryText
+import com.example.gymify.ui.theme.SecondaryText
+import com.example.gymify.ui.theme.SurfaceDark
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -42,8 +50,19 @@ fun NotificationSettings(
     var selectedDays by remember { mutableStateOf(setOf<String>()) }
     var selectedTime by remember { mutableStateOf("00:00") }
 
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text("Select Day for Notification", style = MaterialTheme.typography.bodyMedium)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(BackgroundDark)
+            .padding(16.dp)
+    ) {
+        Text(
+            "Select Day for Notification",
+            style = MaterialTheme.typography.bodyMedium,
+            color = PrimaryText
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
@@ -56,18 +75,20 @@ fun NotificationSettings(
                 Button(
                     onClick = {
                         selectedDays = if (isSelected) {
-                            selectedDays - day  // Deselect if already selected
+                            selectedDays - day
                         } else {
-                            selectedDays + day  // Select if not selected
+                            selectedDays + day
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
-                    )
+                        containerColor = if (isSelected) PrimaryRed else SurfaceDark,
+                        contentColor = PrimaryText
+                    ),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
                         text = day,
-                        color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondary
+                        color = PrimaryText
                     )
                 }
             }
@@ -75,33 +96,57 @@ fun NotificationSettings(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Time Picker for selecting notification time
-        Text("Select Notification Time", style = MaterialTheme.typography.bodyMedium)
-        Text(selectedTime, style = MaterialTheme.typography.bodyMedium)
+        Text(
+            "Select Notification Time",
+            style = MaterialTheme.typography.bodyMedium,
+            color = PrimaryText
+        )
 
-        Button(onClick = {
-            // Open the time picker dialog
-            TimePickerDialog(
-                context,
-                { _, hour, minute ->
-                    selectedTime = String.format("%02d:%02d", hour, minute)
-                },
-                0, 0, true
-            ).show()
-        }) {
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Text(
+            selectedTime,
+            style = MaterialTheme.typography.bodyMedium,
+            color = SecondaryText
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Button(
+            onClick = {
+                TimePickerDialog(
+                    context,
+                    { _, hour, minute ->
+                        selectedTime = String.format("%02d:%02d", hour, minute)
+                    },
+                    0, 0, true
+                ).show()
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = PrimaryRed,
+                contentColor = PrimaryText
+            ),
+            shape = RoundedCornerShape(12.dp)
+        ) {
             Text("Pick Time")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Save Button to schedule the notification
-        Button(onClick = {
-            // Save the selected day and time
-            selectedDays.forEach { day ->
-                onSaveNotificationTime(day, selectedTime)
-            }
-        }) {
+        Button(
+            onClick = {
+                selectedDays.forEach { day ->
+                    onSaveNotificationTime(day, selectedTime)
+                }
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = PrimaryRed,
+                contentColor = PrimaryText
+            ),
+            shape = RoundedCornerShape(12.dp)
+        ) {
             Text("Save Notification Time")
         }
     }
 }
+
