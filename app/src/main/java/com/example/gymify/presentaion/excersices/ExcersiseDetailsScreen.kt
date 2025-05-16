@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.util.Log
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import com.example.gymify.R
@@ -140,14 +141,20 @@ fun ExerciseDetailsScreen(
                 Button(
                     onClick = {
                         val exerciseToAdd = PlanExerciseEntity(
-                            id = item.id,
                             name = item.name,
                             gifUrl = item.gifUrl,
                             target = item.target,
-                            day = selectedDay // Set the selected day
+                            day = selectedDay,
+                            exerciseId = item.id,
+                            bodyPart = item.bodyPart,
+                            equipment = item.equipment,
+                            instructions = item.instructions,
+                            secondaryMuscles = item.secondaryMuscles
                         )
                         planViewModel.addToPlan(exerciseToAdd)
                         planViewModel.loadPlan()
+
+                        Toast.makeText(context, "Exercise added to plan", Toast.LENGTH_SHORT).show()
 
                     },
                     modifier = Modifier.fillMaxWidth()

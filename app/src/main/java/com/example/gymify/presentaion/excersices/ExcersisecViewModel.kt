@@ -52,7 +52,6 @@ class ExcersisecViewModel @Inject constructor(
                         val exercises = response.body() ?: emptyList()
                         _exerciseList.postValue(exercises)
 
-                        // Save to Room
                         val entityList = exercises.map { it.toEntity() }
                         exerciseDao.insertExercises(entityList)
 

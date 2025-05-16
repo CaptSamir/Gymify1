@@ -4,13 +4,21 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
-class DataStoreManager @Inject constructor(@ApplicationContext private val context: Context) {
+import kotlin.collections.get
+import kotlin.text.get
+import kotlin.text.set
 
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_settings")
+class DataStoreManager @Inject constructor(
+    private val dataStore: DataStore<Preferences>
+) {
 
     companion object {
         val DARK_MODE = booleanPreferencesKey("dark_mode")
@@ -20,66 +28,66 @@ class DataStoreManager @Inject constructor(@ApplicationContext private val conte
         val USER_HEIGHT = intPreferencesKey("user_height")
         val USER_WEIGHT = intPreferencesKey("user_weight")
 
-        // New key for onboarding completed
-        val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
+        private val ONBOARDING_COMPLETED_KEY = booleanPreferencesKey("onboarding_completed")
     }
-        // New key for onboarding completed
 
-    // Existing setters...
     suspend fun setDarkMode(enabled: Boolean) {
-        context.dataStore.edit { settings ->
+        dataStore.edit { settings ->
             settings[DARK_MODE] = enabled
         }
     }
 
     suspend fun setNotificationsEnabled(enabled: Boolean) {
-        context.dataStore.edit { settings ->
+        dataStore.edit { settings ->
             settings[NOTIFICATIONS_ENABLED] = enabled
         }
     }
 
     suspend fun setUserName(name: String) {
-        context.dataStore.edit { settings ->
+        dataStore.edit { settings ->
             settings[USER_NAME] = name
         }
     }
 
     suspend fun setUserHeight(height: Int) {
-        context.dataStore.edit { settings ->
+        dataStore.edit { settings ->
             settings[USER_HEIGHT] = height
         }
     }
 
     suspend fun setUserWeight(weight: Int) {
-        context.dataStore.edit { settings ->
+        dataStore.edit { settings ->
             settings[USER_WEIGHT] = weight
         }
     }
 
-    // New: Save onboarding completed
-    suspend fun setOnboardingCompleted(completed: Boolean) {
-        context.dataStore.edit { settings ->
-            settings[ONBOARDING_COMPLETED] = completed
+    val onboardingCompletedLiveData: LiveData<Boolean> = dataStore.data
+        .map { preferences ->
+            preferences[ONBOARDING_COMPLETED_KEY] ?: false
+        }
+        .asLiveData()
+
+
+    suspend fun setOnboardingCompleted(isCompleted: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[ONBOARDING_COMPLETED_KEY] = isCompleted
         }
     }
 
-    // Existing getters...
-    val darkModeFlow: Flow<Boolean> = context.dataStore.data
+
+    val darkModeFlow: Flow<Boolean> = dataStore.data
         .map { it[DARK_MODE] ?: false }
 
-    val notificationsEnabledFlow: Flow<Boolean> = context.dataStore.data
+    val notificationsEnabledFlow: Flow<Boolean> = dataStore.data
         .map { it[NOTIFICATIONS_ENABLED] ?: true }
 
-    val userNameFlow: Flow<String> = context.dataStore.data
+    val userNameFlow: Flow<String> = dataStore.data
         .map { it[USER_NAME] ?: "Kareem" }
 
-    val userHeightFlow: Flow<Int> = context.dataStore.data
+    val userHeightFlow: Flow<Int> = dataStore.data
         .map { it[USER_HEIGHT] ?: 180 }
 
-    val userWeightFlow: Flow<Int> = context.dataStore.data
+    val userWeightFlow: Flow<Int> = dataStore.data
         .map { it[USER_WEIGHT] ?: 94 }
 
-    // New: Read onboarding completed state
-    val onboardingCompletedFlow: Flow<Boolean> = context.dataStore.data
-        .map { it[ONBOARDING_COMPLETED] ?: false }
 }

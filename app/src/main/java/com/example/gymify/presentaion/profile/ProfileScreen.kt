@@ -160,6 +160,7 @@ fun ProfileScreen(
                 viewModel = viewModel,
                 onSaveNotificationTime = { selectedDay, selectedTime ->
                     showNotificationSettings = false
+                    viewModel.scheduleNotification(context ,selectedDay, selectedTime)
                 },
                 context = context
             )

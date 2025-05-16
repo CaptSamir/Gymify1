@@ -13,7 +13,7 @@ import kotlin.random.Random
 class NotificationWorker(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
 
     override fun doWork(): Result {
-        val selectedDay = inputData.getString("selectedDay") ?: "Pass ONE" // Default to Monday if no value is passed
+        val selectedDay = inputData.getString("selectedDay") ?: "Pass ONE"
         sendNotification(applicationContext, selectedDay)
 
         return Result.success()

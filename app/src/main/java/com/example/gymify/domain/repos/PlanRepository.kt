@@ -7,6 +7,6 @@ import javax.inject.Inject
 class PlanRepository @Inject constructor(private val dao: PlanDao) {
     suspend fun add(exercise: PlanExerciseEntity) = dao.addExerciseToPlan(exercise)
     suspend fun getAll(): List<PlanExerciseEntity> = dao.getAllPlanExercises()
-    suspend fun remove(id: String) = dao.removeExerciseFromPlan(id)
+    suspend fun remove(id: Int) = dao.removeExerciseFromPlan(id)
     suspend fun clear() = dao.clearPlan()
 }

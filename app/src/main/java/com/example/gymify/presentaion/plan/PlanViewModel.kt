@@ -33,14 +33,14 @@ class PlanViewModel @Inject constructor(
     fun addToPlan(exercise: PlanExerciseEntity) {
         viewModelScope.launch {
             planRepository.add(exercise)
-            loadPlan() // Ensure plan is reloaded after modification
+            loadPlan()
         }
     }
 
-    fun removeFromPlan(id: String) {
+    fun removeFromPlan(id: Int) {
         viewModelScope.launch {
             planRepository.remove(id)
-            loadPlan() // Ensure plan is reloaded after modification
+            loadPlan()
         }
     }
 

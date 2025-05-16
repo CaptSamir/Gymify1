@@ -7,14 +7,15 @@ import androidx.room.Query
 
 @Dao
 interface PlanDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addExerciseToPlan(exercise: PlanExerciseEntity)
 
     @Query("SELECT * FROM plan_exercises")
     suspend fun getAllPlanExercises(): List<PlanExerciseEntity>
 
-    @Query("DELETE FROM plan_exercises WHERE id = :exerciseId")
-    suspend fun removeExerciseFromPlan(exerciseId: String)
+    @Query("DELETE FROM plan_exercises WHERE id = :id")
+    suspend fun removeExerciseFromPlan(id: Int)
 
     @Query("DELETE FROM plan_exercises")
     suspend fun clearPlan()

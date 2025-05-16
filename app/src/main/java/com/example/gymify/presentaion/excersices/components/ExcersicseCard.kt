@@ -32,7 +32,6 @@ fun ExerciseCard(exercise: ExcersiceItem, onExerciseClick: (ExcersiceItem) -> Un
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                Toast.makeText(context, "Clicked on ${exercise.name}", Toast.LENGTH_SHORT).show()
                 onExerciseClick(exercise)
             },
         shape = RoundedCornerShape(12.dp),
