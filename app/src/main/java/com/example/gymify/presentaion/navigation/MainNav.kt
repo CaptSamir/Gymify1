@@ -1,10 +1,15 @@
 package com.example.gymify.presentaion.navigation
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
@@ -12,7 +17,7 @@ import androidx.navigation.navArgument
 import com.example.gymify.presentaion.excersices.ExerciseDetailsScreen
 import com.example.gymify.presentaion.excersices.ExercisesScreen
 import com.example.gymify.presentaion.home.HomeScreen
-import com.example.gymify.presentaion.meals.ChatBot
+import com.example.gymify.presentaion.chat.ChatBot
 import com.example.gymify.presentaion.plan.PlanScreen
 import com.example.gymify.presentaion.profile.ProfileScreen
 
@@ -24,7 +29,7 @@ fun MainNav() {
     val items = listOf(
         BottomNavItem.Home,
         BottomNavItem.Exercises,
-        BottomNavItem.Meals,
+        BottomNavItem.Ai,
         BottomNavItem.Profile
     )
 
@@ -33,11 +38,16 @@ fun MainNav() {
             NavigationBar(
                 containerColor = Color.Black,
                 contentColor = Color.White,
-                tonalElevation = 4.dp
+                tonalElevation = 0.dp,
             ) {
                 items.forEach { item ->
                     NavigationBarItem(
-                        icon = { Icon(item.icon, contentDescription = null) },
+                        icon = {
+                            Icon(
+                                painter = painterResource(id = item.icon),
+                                contentDescription = item.label
+                            )
+                        },
                         label = { Text(item.label) },
                         selected = false,
                         onClick = {
@@ -70,7 +80,7 @@ fun MainNav() {
                     navController.navigate("exercise_detail/${exercise.id}")
                 }
             )}
-            composable(BottomNavItem.Meals.route) { ChatBot() }
+            composable(BottomNavItem.Ai.route) { ChatBot() }
             composable(BottomNavItem.Profile.route) { ProfileScreen(navController = navController) }
 
             composable(
@@ -87,7 +97,7 @@ fun MainNav() {
                 onBack = ({
                     navController.popBackStack()
                 })
-            ) } // Add PlanScreen here
+            ) }
 
         }
     }

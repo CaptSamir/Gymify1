@@ -1,9 +1,7 @@
-package com.example.gymify.presentaion.meals
+package com.example.gymify.presentaion.chat
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gymify.data.online.ChatGptApi

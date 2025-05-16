@@ -17,6 +17,9 @@ import com.example.gymify.data.local.DataStoreManager
 import com.example.gymify.domain.notifications.NotificationWorker
 import com.example.gymify.domain.repos.PlanRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -29,6 +32,25 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val dataStore: DataStoreManager
 ) : ViewModel(){
+
+    private val _name = MutableStateFlow("Kareem")
+    val name: StateFlow<String> = _name
+
+    private val _height = MutableStateFlow("180")
+    val height: StateFlow<String> = _height
+
+    private val _weight = MutableStateFlow("94")
+    val weight: StateFlow<String> = _weight
+
+
+    init {
+        viewModelScope.launch {
+            _name.value = dataStore.userNameFlow.firstOrNull() ?: "Kareem"
+            _height.value = dataStore.userHeightFlow.firstOrNull()?.toString() ?: "180"
+            _weight.value = dataStore.userWeightFlow.firstOrNull()?.toString() ?: "94"
+        }
+    }
+
 
     fun scheduleNotification(context: Context, selectedDay: String, selectedTime: String) {
         val notificationTime = parseTime(selectedTime, selectedDay)
@@ -125,6 +147,28 @@ class ProfileViewModel @Inject constructor(
 
 
 
+    fun setName(newName: String) {
+        _name.value = newName
+        viewModelScope.launch {
+            dataStore.setUserName(newName)
+        }
+    }
+
+    fun setHeight(newHeight: String) {
+        _height.value = newHeight
+        val heightInt = newHeight.toIntOrNull() ?: 0
+        viewModelScope.launch {
+            dataStore.setUserHeight(heightInt)
+        }
+    }
+
+    fun setWeight(newWeight: String) {
+        _weight.value = newWeight
+        val weightInt = newWeight.toIntOrNull() ?: 0
+        viewModelScope.launch {
+            dataStore.setUserWeight(weightInt)
+        }
+    }
 
 
 

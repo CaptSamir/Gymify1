@@ -1,4 +1,4 @@
-package com.example.gymify.presentaion.meals
+package com.example.gymify.presentaion.chat
 
 
 import androidx.compose.animation.core.animateDpAsState
@@ -28,9 +28,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.gymify.presentaion.meals.components.ChatBubble
+import com.example.gymify.presentaion.chat.components.ChatBubble
 import com.example.gymify.ui.theme.BackgroundDark
-import com.example.gymify.ui.theme.DividerColor
 import com.example.gymify.ui.theme.PrimaryRed
 import com.example.gymify.ui.theme.PrimaryText
 import com.example.gymify.ui.theme.SecondaryText

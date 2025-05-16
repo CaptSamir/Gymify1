@@ -19,11 +19,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImage
 import com.example.gymify.domain.models.ExcersiceItem
+import com.example.gymify.ui.theme.DarkSecondaryContainer
+import com.example.gymify.ui.theme.DarkTextPrimary
 import dagger.hilt.android.qualifiers.ApplicationContext
 
-
 @Composable
-fun ExerciseCard(exercise: ExcersiceItem , onExerciseClick: (ExcersiceItem) -> Unit = {}) {
+fun ExerciseCard(exercise: ExcersiceItem, onExerciseClick: (ExcersiceItem) -> Unit = {}) {
 
     val context = LocalContext.current
 
@@ -35,6 +36,9 @@ fun ExerciseCard(exercise: ExcersiceItem , onExerciseClick: (ExcersiceItem) -> U
                 onExerciseClick(exercise)
             },
         shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = DarkSecondaryContainer
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -50,7 +54,8 @@ fun ExerciseCard(exercise: ExcersiceItem , onExerciseClick: (ExcersiceItem) -> U
             Text(
                 text = exercise.name,
                 modifier = Modifier.padding(8.dp),
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
+                color = DarkTextPrimary
             )
         }
     }
