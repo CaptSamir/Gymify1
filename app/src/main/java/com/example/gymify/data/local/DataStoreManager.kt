@@ -28,6 +28,8 @@ class DataStoreManager @Inject constructor(
         val USER_HEIGHT = intPreferencesKey("user_height")
         val USER_WEIGHT = intPreferencesKey("user_weight")
 
+        val NOTIFICATIONS_TIME = stringPreferencesKey("notifications_time")
+
         private val ONBOARDING_COMPLETED_KEY = booleanPreferencesKey("onboarding_completed")
     }
 
@@ -89,5 +91,16 @@ class DataStoreManager @Inject constructor(
 
     val userWeightFlow: Flow<Int> = dataStore.data
         .map { it[USER_WEIGHT] ?: 94 }
+
+
+
+    suspend fun setNotificationTime(time: String) {
+        dataStore.edit { settings ->
+            settings[NOTIFICATIONS_TIME] = time
+        }
+    }
+
+    val notificationTimeFlow: Flow<String> = dataStore.data
+        .map { it[NOTIFICATIONS_TIME] ?: "" }
 
 }

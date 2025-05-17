@@ -41,9 +41,9 @@ object NotificationHelper {
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val notification = NotificationCompat.Builder(context, "gymify_channel")
-            .setContentTitle(title) // Customize the title
-            .setContentText(content) // Customize the content
-            .setSmallIcon(R.drawable.ic_launcher_background) // Change this icon to suit your app's style
+            .setContentTitle(title)
+            .setContentText(content)
+            .setSmallIcon(R.drawable.ic_launcher_background)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
 

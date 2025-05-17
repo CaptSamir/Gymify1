@@ -9,6 +9,7 @@ import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import com.example.gymify.R
 import androidx.compose.foundation.layout.*
@@ -51,7 +52,11 @@ import coil.decode.ImageDecoderDecoder
 import com.example.gymify.data.local.planDB.PlanExerciseEntity
 import com.example.gymify.domain.models.ExcersiceItem
 import com.example.gymify.presentaion.plan.PlanViewModel
-
+import com.example.gymify.ui.theme.DarkBackground
+import com.example.gymify.ui.theme.DarkPrimary
+import com.example.gymify.ui.theme.DarkSecondary
+import com.example.gymify.ui.theme.DarkTextPrimary
+import com.example.gymify.ui.theme.DarkTextSecondary
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -77,8 +82,9 @@ fun ExerciseDetailsScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
                     .verticalScroll(rememberScrollState())
+                    .background(DarkBackground)
+                    .padding(16.dp)
             ) {
                 val gifEnabledLoader = ImageLoader.Builder(context)
                     .components {
@@ -102,22 +108,41 @@ fun ExerciseDetailsScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(text = item.name, style = MaterialTheme.typography.headlineSmall)
-                Text(text = "Target: ${item.target}", style = MaterialTheme.typography.bodyLarge)
-                Text(text = "Secondary: ${item.secondaryMuscles.joinToString()}", style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    text = item.name,
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = DarkTextPrimary // Use custom dark text color
+                )
+                Text(
+                    text = "Target: ${item.target}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = DarkTextSecondary // Use custom secondary text color
+                )
+                Text(
+                    text = "Secondary: ${item.secondaryMuscles.joinToString()}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = DarkTextSecondary
+                )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text("Instructions:", style = MaterialTheme.typography.titleMedium)
+                Text(
+                    "Instructions:",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = DarkTextPrimary
+                )
                 item.instructions.forEachIndexed { index, step ->
-                    Text("${index + 1}. $step", style = MaterialTheme.typography.bodySmall)
+                    Text(
+                        "${index + 1}. $step",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = DarkTextSecondary
+                    )
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
 
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
-
                 ) {
                     val daysOfWeek = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
                     daysOfWeek.forEach { day ->
@@ -127,13 +152,13 @@ fun ExerciseDetailsScreen(
                                 .padding(4.dp)
                                 .clip(RoundedCornerShape(8.dp)),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (selectedDay == day) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
+                                containerColor = if (selectedDay == day) DarkPrimary else DarkSecondary,
+                                contentColor = if (selectedDay == day) DarkTextPrimary else DarkTextSecondary
                             )
                         ) {
                             Text(
                                 text = day,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = if (selectedDay == day) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondary
+                                style = MaterialTheme.typography.bodyMedium
                             )
                         }
                     }
@@ -157,7 +182,11 @@ fun ExerciseDetailsScreen(
                         Toast.makeText(context, "Exercise added to plan", Toast.LENGTH_SHORT).show()
 
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = DarkPrimary,
+                        contentColor = DarkTextPrimary
+                    )
                 ) {
                     Text("Add to Plan")
                 }
@@ -165,18 +194,28 @@ fun ExerciseDetailsScreen(
         }
 
         error != null -> {
-            Text(text = error ?: "Something went wrong")
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(DarkBackground),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = error ?: "Something went wrong",
+                    color = DarkTextPrimary
+                )
+            }
         }
 
         else -> {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(DarkBackground),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(color = DarkPrimary)
             }
         }
     }
 }
-
-

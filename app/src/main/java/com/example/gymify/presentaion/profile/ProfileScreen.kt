@@ -1,6 +1,7 @@
 package com.example.gymify.presentaion.profile
 
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -25,11 +26,7 @@ import com.example.gymify.presentaion.navigation.Screen
 import com.example.gymify.presentaion.profile.components.NotificationSettings
 import com.example.gymify.presentaion.profile.components.ProfileItem
 import com.example.gymify.presentaion.profile.components.ProfileToggleItem
-import com.example.gymify.ui.theme.BackgroundDark
-import com.example.gymify.ui.theme.PrimaryRed
-import com.example.gymify.ui.theme.PrimaryText
-import com.example.gymify.ui.theme.SecondaryText
-import com.example.gymify.ui.theme.SurfaceDark
+import com.example.gymify.ui.theme.*
 
 @Composable
 fun ProfileScreen(
@@ -50,28 +47,31 @@ fun ProfileScreen(
     var isEditing by remember { mutableStateOf(false) }
     var showNotificationSettings by remember { mutableStateOf(false) }
 
+    val notificationDetails by viewModel.notificationTime.collectAsState("")
+
+
     Column(
         modifier
             .fillMaxSize()
-            .background(BackgroundDark) // Background color
+            .background(BackgroundDark)
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        Text("Profile", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = PrimaryText) // Text color
+        Text("Profile", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = PrimaryText)
         Spacer(Modifier.height(20.dp))
 
         Card(
             shape = RoundedCornerShape(12.dp),
             elevation = CardDefaults.cardElevation(4.dp),
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = SurfaceDark) // Card background color
+            colors = CardDefaults.cardColors(containerColor = SurfaceDark)
         ) {
             Column(Modifier.padding(16.dp)) {
                 if (isEditing) {
                     OutlinedTextField(
                         value = name,
                         onValueChange = { viewModel.setName(it) },
-                        label = { Text("Name", color = SecondaryText) }, // Label color
+                        label = { Text("Name", color = SecondaryText) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -80,7 +80,7 @@ fun ProfileScreen(
                     OutlinedTextField(
                         value = height,
                         onValueChange = { viewModel.setHeight(it.filter { ch -> ch.isDigit() }) },
-                        label = { Text("Height (cm)", color = SecondaryText) }, // Label color
+                        label = { Text("Height (cm)", color = SecondaryText) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.fillMaxWidth()
@@ -90,7 +90,7 @@ fun ProfileScreen(
                     OutlinedTextField(
                         value = weight,
                         onValueChange = { viewModel.setWeight(it.filter { ch -> ch.isDigit() }) },
-                        label = { Text("Weight (kg)", color = SecondaryText) }, // Label color
+                        label = { Text("Weight (kg)", color = SecondaryText) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.fillMaxWidth()
@@ -103,9 +103,9 @@ fun ProfileScreen(
                                 isEditing = false
                                 Toast.makeText(context, "Info Saved", Toast.LENGTH_SHORT).show()
                             },
-                            colors = ButtonDefaults.buttonColors(containerColor = PrimaryRed) // Button color
+                            colors = ButtonDefaults.buttonColors(containerColor = PrimaryRed)
                         ) {
-                            Text("Save", color = PrimaryText) // Text color
+                            Text("Save", color = PrimaryText)
                         }
                         Spacer(Modifier.width(16.dp))
                         Button(
@@ -113,23 +113,23 @@ fun ProfileScreen(
                                 isEditing = false
                             }
                         ) {
-                            Text("Cancel", color = PrimaryText) // Text color
+                            Text("Cancel", color = PrimaryText)
                         }
                     }
                 } else {
-                    Text(name, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = PrimaryText) // Text color
+                    Text(name, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = PrimaryText)
                     Spacer(Modifier.height(8.dp))
-                    Text("Height: $height cm", color = SecondaryText) // Text color
-                    Text("Weight: $weight kg", color = SecondaryText) // Text color
+                    Text("Height: $height cm", color = SecondaryText)
+                    Text("Weight: $weight kg", color = SecondaryText)
                     val bmi = calculateBMI(height, weight)
-                    Text("BMI: $bmi", color = PrimaryText) // Text color
+                    Text("BMI: $bmi", color = PrimaryText)
                     Spacer(Modifier.height(12.dp))
 
                     Button(
                         onClick = { isEditing = true },
-                        colors = ButtonDefaults.buttonColors(containerColor = PrimaryRed) // Button color
+                        colors = ButtonDefaults.buttonColors(containerColor = PrimaryRed)
                     ) {
-                        Text("Edit Info", color = PrimaryText) // Text color
+                        Text("Edit Info", color = PrimaryText)
                     }
                 }
             }
@@ -137,7 +137,7 @@ fun ProfileScreen(
 
         Spacer(Modifier.height(24.dp))
 
-        Text("Settings", fontSize = 18.sp, fontWeight = FontWeight.Medium, color = PrimaryText) // Text color
+        Text("Settings", fontSize = 18.sp, fontWeight = FontWeight.Medium, color = PrimaryText)
         Spacer(Modifier.height(12.dp))
 
         ProfileToggleItem(
@@ -151,6 +151,8 @@ fun ProfileScreen(
                 } else {
                     showNotificationSettings = false
                     Toast.makeText(context, "Notifications Disabled", Toast.LENGTH_SHORT).show()
+                    viewModel.disableNotification(context)
+                    viewModel.clearNotificationDetails()
                 }
             }
         )
@@ -159,10 +161,18 @@ fun ProfileScreen(
             NotificationSettings(
                 viewModel = viewModel,
                 onSaveNotificationTime = { selectedDay, selectedTime ->
-                    showNotificationSettings = false
-                    viewModel.scheduleNotification(context ,selectedDay, selectedTime)
-                },
+                    viewModel.scheduleNotification(context, selectedDay, selectedTime)
+                    showNotificationSettings = false },
                 context = context
+            )
+        }
+
+        if (notificationDetails.isNotEmpty()) {
+            Text(
+                text = notificationDetails,
+                color = SecondaryText,
+                fontSize = 14.sp,
+                modifier = Modifier.padding(top = 8.dp)
             )
         }
 
@@ -181,10 +191,11 @@ fun ProfileScreen(
             onLogOutClick()
         }
     }
+
+
 }
 
-@Composable
-fun calculateBMI(heightCm: String, weightKg: String): String {
+@Composable fun calculateBMI(heightCm: String, weightKg: String): String {
     val height = heightCm.toFloatOrNull() ?: return "-"
     val weight = weightKg.toFloatOrNull() ?: return "-"
     if (height == 0f) return "-"

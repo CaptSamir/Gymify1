@@ -24,6 +24,7 @@ import com.example.gymify.presentaion.onBoarding.OnBoardingScreen
 import com.example.gymify.presentaion.onBoarding.OnboardingViewModel
 import com.example.gymify.presentaion.plan.PlanScreen
 import com.example.gymify.presentaion.profile.ProfileScreen
+import com.example.gymify.ui.theme.PrimaryDark
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -55,7 +56,7 @@ fun MainNav(
             bottomBar = {
                 if (startDestination1 == "main_graph") {
                     NavigationBar(
-                        containerColor = Color.Black,
+                        containerColor = PrimaryDark,
                         contentColor = Color.White,
                         tonalElevation = 0.dp,
                     ) {

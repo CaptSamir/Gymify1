@@ -78,7 +78,7 @@ fun HomeScreen(
             .verticalScroll(rememberScrollState()),
     ) {
         Text(
-            "Welcome to GYMIFY 💪",
+            "Welcome to GYMIFY",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = PrimaryText
@@ -86,7 +86,6 @@ fun HomeScreen(
 
         Spacer(Modifier.height(24.dp))
 
-        // Personal Info Card
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),

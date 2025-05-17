@@ -4,6 +4,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.datastore.dataStore
 import androidx.lifecycle.ViewModel
@@ -42,6 +43,8 @@ class ProfileViewModel @Inject constructor(
     private val _weight = MutableStateFlow("94")
     val weight: StateFlow<String> = _weight
 
+    val notificationTime = dataStore.notificationTimeFlow
+
 
     init {
         viewModelScope.launch {
@@ -51,6 +54,18 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun clearNotificationDetails() {
+        viewModelScope.launch {
+            dataStore.setNotificationTime("")
+        }
+    }
+
+    fun disableNotification(context: Context) {
+        val workManager = WorkManager.getInstance(context)
+        workManager.cancelAllWork()
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancelAll()
+    }
 
     fun scheduleNotification(context: Context, selectedDay: String, selectedTime: String) {
         val notificationTime = parseTime(selectedTime, selectedDay)
@@ -58,7 +73,7 @@ class ProfileViewModel @Inject constructor(
         var initialDelay = notificationTime - System.currentTimeMillis()
 
         if (initialDelay < 0) {
-            initialDelay += TimeUnit.DAYS.toMillis(7) // Add 7 days to push it to the next week
+            initialDelay += TimeUnit.DAYS.toMillis(7)
         }
 
         Log.d("Notification", "Initial delay: $initialDelay")
@@ -73,21 +88,24 @@ class ProfileViewModel @Inject constructor(
             .build()
 
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-            "NotificationWork_$selectedDay", // unique ID for each day
+            "NotificationWork_$selectedDay",
             ExistingPeriodicWorkPolicy.KEEP,
             workRequest
         )
 
-
     }
 
 
+    fun setNotificationTime(selectedDay: String , selectedTime: String) {
+        viewModelScope.launch {
+            dataStore.setNotificationTime("Next Notification on $selectedDay at $selectedTime")
+        }
+    }
 
     fun parseTime(selectedTime: String, selectedDay: String): Long {
         val now = Calendar.getInstance()
         val calendar = Calendar.getInstance()
 
-        // Set day of week
         when (selectedDay.lowercase()) {
             "monday" -> calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
             "tuesday" -> calendar.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY)
@@ -98,7 +116,6 @@ class ProfileViewModel @Inject constructor(
             "sunday" -> calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
         }
 
-        // Parse time string
         val (hour, minute) = selectedTime.split(":").map { it.toIntOrNull() ?: 0 }
 
         calendar.set(Calendar.HOUR_OF_DAY, hour)
@@ -106,7 +123,6 @@ class ProfileViewModel @Inject constructor(
         calendar.set(Calendar.SECOND, 0)
         calendar.set(Calendar.MILLISECOND, 0)
 
-        // If the result is before now, shift to next week
         if (calendar.timeInMillis <= now.timeInMillis) {
             calendar.add(Calendar.DAY_OF_YEAR, 7)
         }

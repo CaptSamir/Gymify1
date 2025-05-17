@@ -89,7 +89,7 @@ fun ChatBot(
             val interactionSource = remember { MutableInteractionSource() }
             val isFocused by interactionSource.collectIsFocusedAsState()
 
-            val targetHeight = if (isFocused) 150.dp else 56.dp // لما تدوس يكبر
+            val targetHeight = if (isFocused) 80.dp else 56.dp
             val animatedHeight by animateDpAsState(
                 targetValue = targetHeight,
                 label = "TextFieldFocusAnimation"

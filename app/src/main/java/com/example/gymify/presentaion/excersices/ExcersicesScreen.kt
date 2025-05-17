@@ -99,7 +99,7 @@ fun ExercisesScreen(
                     label = { Text(label) },
                     colors = FilterChipDefaults.filterChipColors(
                         containerColor = if (selectedFilter == label) DarkPrimary else DarkSecondaryContainer,
-                        labelColor = if (selectedFilter == label) DarkTextPrimary else DarkTextSecondary
+                        labelColor = if (selectedFilter == label) DarkTextPrimary else PrimaryRed
                     )
                 )
             }

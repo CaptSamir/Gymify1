@@ -29,7 +29,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    @ExerciseRetrofit // Apply the qualifier here
+    @ExerciseRetrofit
     fun provideExerciseRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://exercisedb.p.rapidapi.com/")
@@ -39,7 +39,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    @ExerciseRetrofit // Apply the qualifier here
+    @ExerciseRetrofit
     fun provideExerciseApiService(@ExerciseRetrofit retrofit: Retrofit): API {
         return retrofit.create(API::class.java)
     }
@@ -65,7 +65,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    @ChatGptRetrofit // Apply the qualifier here
+    @ChatGptRetrofit
     fun provideChatGptRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://chatgpt-42.p.rapidapi.com/")
@@ -76,7 +76,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    @ChatGptRetrofit // Apply the qualifier here
+    @ChatGptRetrofit
     fun provideChatGptApi(@ChatGptRetrofit retrofit: Retrofit): ChatGptApi {
         return retrofit.create(ChatGptApi::class.java)
     }

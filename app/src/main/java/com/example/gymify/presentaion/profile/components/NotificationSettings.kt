@@ -119,7 +119,7 @@ fun NotificationSettings(
                     { _, hour, minute ->
                         selectedTime = String.format("%02d:%02d", hour, minute)
                     },
-                    0, 0, true
+                    0, 0, false
                 ).show()
             },
             colors = ButtonDefaults.buttonColors(
@@ -138,6 +138,8 @@ fun NotificationSettings(
                 selectedDays.forEach { day ->
                     onSaveNotificationTime(day, selectedTime)
                 }
+                viewModel.setNotificationTime(selectedDays.elementAt(0), selectedTime)
+
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = PrimaryRed,
@@ -147,6 +149,8 @@ fun NotificationSettings(
         ) {
             Text("Save Notification Time")
         }
+
+
     }
 }
 

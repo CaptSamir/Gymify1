@@ -12,6 +12,7 @@ import com.example.gymify.data.local.appDataBase.ExerciseEntity
 import com.example.gymify.data.online.API
 import com.example.gymify.di.ExerciseRetrofit
 import com.example.gymify.domain.models.ExcersiceItem
+import com.example.gymify.domain.repos.ExcercicesRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
@@ -21,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ExcersisecViewModel @Inject constructor(
-    @ExerciseRetrofit private val apiService: API,
+    private val apiService: ExcercicesRepo,
     private val exerciseDao: ExerciseDao,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
@@ -47,7 +48,7 @@ class ExcersisecViewModel @Inject constructor(
         viewModelScope.launch {
             if (context.isConnected()) {
                 try {
-                    val response = apiService.getExercises(limit, offset)
+                    val response = apiService.fetchExercises(limit, offset)
                     if (response.isSuccessful) {
                         val exercises = response.body() ?: emptyList()
                         _exerciseList.postValue(exercises)
@@ -76,7 +77,7 @@ class ExcersisecViewModel @Inject constructor(
         viewModelScope.launch {
             if (context.isConnected()) {
                 try {
-                    val response = apiService.getExerciseById(id)
+                    val response = apiService.fetchExerciseById(id)
                     if (response.isSuccessful) {
                         response.body()?.let {
                             _exerciseById.postValue(it)
